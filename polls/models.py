@@ -9,6 +9,7 @@ def get_upload_file_name(instance,filename):
 class CoursePoll(models.Model):
 	title = models.CharField(max_length=200)
 	description = models.TextField(blank=True)
+	course = models.ForeignKey(Course)
 	createDate = models.DateField(auto_now_add=True)
 	creater = models.ForeignKey(settings.AUTH_USER_MODEL)
 
