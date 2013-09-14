@@ -1,0 +1,16 @@
+from django.db import models
+from courses.models import Course
+from django.conf import settings
+# Create your models here.
+
+class CoursePoll(models.Model):
+	title = models.CharField(max_length=200)
+	description = models.TextField(blank=True)
+	createDate = models.DateField(auto_now_add=True)
+	creater = models.ForeignKey(settings.AUTH_USER_MODEL)
+
+
+class CoursePollOption(models.Model):
+	name = models.CharField(max_lenght=200)
+	votes = models.IntegerField()
+	voters = models.ManyoManyfield(settings.AUTH_USER_MODEL)
