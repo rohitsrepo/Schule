@@ -1,5 +1,6 @@
 from django.conf.urls import patterns, include, url
 from accounts import urls as accountUrls
+from courses import urls as coursesUrls
 from django.conf import settings
 from django.views.generic import TemplateView
 #from django.views.generic.simple import direct_to_template
@@ -22,4 +23,5 @@ urlpatterns = patterns('',
     # Uncomment the next line to enable the admin:
     url(r'^schule_name/$', TemplateView.as_view(template_name='base.html'),name='home'),	
     url(r'schule_name/accounts/',include(accountUrls)),
+    url(r'schule_name/courses/',include(coursesUrls)),
 )

@@ -45,7 +45,7 @@ USE_TZ = True
 
 # Absolute filesystem path to the directory that will hold user-uploaded files.
 # Example: "/home/media/media.lawrence.com/media/"
-MEDIA_ROOT = '/home/rohkum/Desktop/star/schule/ver3.1/ver3/schule/static'
+MEDIA_ROOT = '/home/rohit/Desktop/star_start/Schule/static'
 
 # URL that handles the media served from MEDIA_ROOT. Make sure to use a
 # trailing slash.
@@ -103,7 +103,7 @@ ROOT_URLCONF = 'schule.urls'
 WSGI_APPLICATION = 'schule.wsgi.application'
 
 TEMPLATE_DIRS = (
-    '/home/rohit/Desktop/star/ver3.1/ver3/schule/templates',
+    '/home/rohit/Desktop/star_start/Schule/templates',
     # Put strings here, like "/home/html/django_templates" or "C:/www/django/templates".
     # Always use forward slashes, even on Windows.
     # Don't forget to use absolute paths, not relative paths.
