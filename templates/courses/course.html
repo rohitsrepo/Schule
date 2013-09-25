@@ -1,0 +1,25 @@
+{% extends "base.html"  %}
+{% block content %}
+
+<h1>{{ course.name }}</h1>
+<p> {{ course.description  }}  </p>
+
+</br>
+
+<h3>Admin: {{ courseAdmin  }}  </h3>
+
+</br>
+
+
+<h3>Moderators </h3>
+<ul>
+{% for mod in CourseMods  %}
+	<li> {{ mod  }} </li>
+{% endfor %}
+</ul>
+<a href=""> Members </a>
+<a href ="">Posts</a>
+<a href="">Forums</a>
+<a href="">Assignments </a>
+<a href="">Resources</a>
+{% endblock %}
