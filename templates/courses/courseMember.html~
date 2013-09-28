@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<ul>
+{% for member in courseMembers  %}
+	<li> {{ member.user.name  }} <a href="{% url 'flip_course_membership'  %}">{{ member.userType }}</a></li>
+{% endfor %}
+</ul>
+
+
+<form method="post"  action="{% url 'course_member_url' %}">
+{% csrf_token %}
+{{ form  }}
+
+	<input type="submit" value="addMember" name='Add Member'/>
+	<input type="hidden" name="next" value="{{ next }}" />
+</form>
+{% endblock %}

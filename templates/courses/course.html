@@ -17,7 +17,7 @@
 	<li> {{ mod  }} </li>
 {% endfor %}
 </ul>
-<a href=""> Members </a>
+<a href="{% url 'course_member_url' course.id %}"> Members </a>
 <a href ="">Posts</a>
 <a href="">Forums</a>
 <a href="">Assignments </a>

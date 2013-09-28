@@ -3,8 +3,9 @@
 {% block content %}
 
 <ul>
+<h1> Memebers of Course:{{ course.id  }} {{ course.name }}</h1>
 {% for member in courseMembers  %}
-	<li> {{ member.user.name  }} <a href="{% url 'flip_course_membership' course_id=course.id user_id = member.user.id%}">{{ member.userType }}</a></li>
+	<li> User: {{ member.user  }} Type: <a href="{% url 'flip_course_membership' course_id=course.id user_id=member.user.id %}">{{ member.userType }}</a></li>
 {% endfor %}
 </ul>
 

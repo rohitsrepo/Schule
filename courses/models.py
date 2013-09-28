@@ -2,6 +2,7 @@ from django.db import models
 from django.conf import settings
 from django.contrib import admin
 from datetime import time
+from courses.signals import CreateCourseMembership
 # Create your models here.
 
 def get_upload_file_name(instance,filename):
@@ -16,6 +17,16 @@ class Course(models.Model):
 	members = models.ManyToManyField(settings.AUTH_USER_MODEL, through="CourseMembership")
 	coursePhoto = models.FileField(blank=True, null=True, upload_to= get_upload_file_name)
 	courseVideo = models.FileField(blank=True, null=True,upload_to = get_upload_file_name)
+	
+	def save(self,*args,**kwargs):
+		sendSignal = False
+		if 'user' in kwargs and self.pk is None:
+			sendSignal = True
+
+		super(Course,self).save(*args,**kwargs)
+		
+		if sendSignal:
+			CreateCourseMemberShip.send(sender =Course,instance =self,user =kwargs['user'],created=True)
 
 admin.site.register(Course)
 
