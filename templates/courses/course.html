@@ -13,13 +13,13 @@
 
 <h3>Moderators </h3>
 <ul>
-{% for mod in CourseMods  %}
-	<li> {{ mod  }} </li>
+{% for mod in courseMods  %}
+	<li> {{ mod.user.username  }} </li>
 {% endfor %}
 </ul>
-<a href="{% url 'course_member_url' course.id %}"> Members </a>
-<a href ="">Posts</a>
-<a href="">Forums</a>
-<a href="">Assignments </a>
+<a href="{% url 'course_member_url' course.id %}"> Members </a></br>
+<a href ="{% url 'course_posts_url' course.id %}">Posts</a></br>
+<a href="">Forums</a></br>
+<a href="">Assignments </a></br>
 <a href="">Resources</a>
 {% endblock %}

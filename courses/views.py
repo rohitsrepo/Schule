@@ -33,19 +33,22 @@ def RegisterCourse(request):
 #decide on membership policy- members only view....or all with restricted access
 @login_required
 def CourseHome(request,id):
+	print "retieveing course with id : " +id
 	course = get_object_or_404(Course,pk = id)
+	print "got course with id : "+ str(course.id)
 	courseAdmin =get_object_or_404(CourseMembership,course__id__exact =id,userType='OW').user
 
-	courseMods =[]
+	courseModMembers =[]
 	try:
-		courseWithMods = CourseMembership.objects.filter(course__id__exact = id,userType="MO")
-		courseMods = [course.user for course in courseWithMods]
+		courseModMembers = CourseMembership.objects.filter(course__id__exact = id,userType="MO")
+		#courseMods = [courseMember.user for courseMember in courseWithMods]
 	except CourseMembership.DoesNotExist:
 		pass
+	print "passing to template : " +str(course.id)
 	return render_to_response('courses/course.html',{
 		'course':course,
 		'courseAdmin':courseAdmin,
-		'courseMods':courseMods,
+		'courseMods':courseModMembers,
 		})
 
 

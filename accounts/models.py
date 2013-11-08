@@ -22,6 +22,8 @@ class SchuleUser(AbstractUser):
 	registrationDate = models.DateField(auto_now=True, auto_now_add= True,blank = True)
 	# Length chosen on estimate
 	vigilanceKey = models.CharField(max_length=8)
-
+	
+	class Meta:
+		app_label = "accounts"
 
 #admin.site.register(SchuleUser)
