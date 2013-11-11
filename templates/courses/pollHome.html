@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+{% block content %}
+	<h1>{{ poll.title }}</h1>
+	<p>{{ poll.description }}</p>
+	<form method="post" action="{% url 'pollHome' course.id poll.id %}">
+	{% csrf_token %}
+	{% for poll_op in poll_ops %}
+		<input type="radio" name="vote" value="{{ poll_op.id }}" /> {{ poll_op.name }}<br>	
+	{% endfor %}
+		<input type="submit" value="pollHome" name="pollHome" />
+		<input type="hidden" name="next" value= {{ next }} />
+	</form>
+{% endblock %}

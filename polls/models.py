@@ -8,6 +8,27 @@ from django.contrib.contenttypes import generic
 def get_upload_file_name(instance,filename):
 	return 'uploadedFiles/%s_%s' % (str(time()).replace('.','_'),filename)
 
+
+class CoursePoll(models.Model):
+	title = models.CharField(max_length=200)
+	description = models.TextField(blank=True)
+	createDate = models.DateField(auto_now_add = True)
+	course = models.ForeignKey(Course)
+	creater = models.ForeignKey(settings.AUTH_USER_MODEL,related_name='creater+')
+	voters = models.ManyToManyField(settings.AUTH_USER_MODEL,related_name='voter+')
+
+class CoursePollOption(models.Model):
+	name = models.CharField(max_length=200)
+	votes = models.IntegerField(default=0)
+	poll = models.ForeignKey(CoursePoll)
+
+class CoursePollResource(models.Model):
+	title = models.CharField(max_length=200)
+	description = models.TextField()
+	data = models.FileField(upload_to= get_upload_file_name)
+	poll = models.ForeignKey(CoursePoll)
+
+'''
 class BasePoll(models.Model):
 	content_type = models.ForeignKey(ContentType,verbose_name=('content type'))
 	object_pk=models.TextField(verbose_name='object ID')
@@ -34,3 +55,4 @@ class PollResource(models.Model):
 	description = models.TextField(blank = True)
 	data = models.FileField(upload_to=get_upload_file_name)
 	coursePoll = models.ForeignKey(Poll)
+'''

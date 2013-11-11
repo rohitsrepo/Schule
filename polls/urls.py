@@ -1,7 +1,10 @@
-from django.conf.url import url,pattern
+from django.conf.urls import url,patterns
 from polls.views import *
 
-urlpatter = pattern('',
-	url(r'^/$','PostsHome'),
-	url(r'^post/(?P<post_id>\d+)$','PostHome'),
+urlpatterns = patterns('polls.views' ,
+	url(r'create$','CreatePoll',name='createPoll'),
+	url(r'home$','PollsHome',name='pollsHome'),
+	url(r'poll/(?P<poll_id>\d+)$','PollHome',name='pollHome'),
+	url(r'poll/(?P<poll_id>\d+)/status$','PollStatus',name='pollStatus'),
+
 )

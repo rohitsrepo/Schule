@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% block content %}
+
+	<form method="post"  action="{% url 'createPoll' course.id %}">
+	{% csrf_token %}
+		{{ poll_form }}
+		<br/>
+		{{ poll_op_formset.management_form }}
+		{% for form in poll_op_formset %}
+			{{ form }}
+		{% endfor %}
+		<input type="submit" value="createPoll" />
+		<input type="hidden" name="next" value="{{ next }}"/>	
+	</form>
+
+{% endblock %}

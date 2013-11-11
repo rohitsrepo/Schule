@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+{% block content %}
+	<h1>{{ poll.name }}</h1>
+	<p>{{ poll.description }}</p>
+
+	<ul>
+		{% for poll_op in poll_ops %}
+			<li>{{ poll_op.name }} : {{ poll_op.votes }}</li>
+		{% endfor %}
+	</ul>
+{% endblock %}

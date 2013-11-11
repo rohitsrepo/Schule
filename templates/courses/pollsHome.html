@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% block content %}
+	<h1>POLLS</h1>
+	{% for poll in polls%}
+		<a href="{% url 'pollHome' course.id poll.id %}">{{ poll.title }}</a>
+	{% endfor %}
+	<div class="pagination">
+    		<span class="step-links">
+       			{% if polls.has_previous %}
+            			<a href="?page={{ polls.previous_page_number }}">previous</a>
+        		{% endif %}
+
+        	<span class="current">
+            		Page {{ polls.number }} of {{ polls.paginator.num_pages }}.
+        	</span>
+
+        	{% if polls.has_next %}
+            		<a href="?page={{ polls.next_page_number }}">next</a>
+        	{% endif %}
+    		</span>
+	</div>
+{% endblock %}
