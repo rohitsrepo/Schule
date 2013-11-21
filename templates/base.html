@@ -2,14 +2,26 @@
 <head>
   <title>
      {% block page_title %}
+	Schule_name
      {% endblock  %}
   </title>
 </head>
 
 <body>
    <h1>schule_name</h1>
+  {% block pre_content %}
+  <a href="{% url 'home' %}">HOME</a>
+  <a href="{% url 'all_course' %}">Courses</a>
+  <a href ="">Groups</a>
+  <a href ="{% url 'user_home' %}">MyHome</a>
+  {% endblock %}
+  </br>
   {% block content %}
   This is the home page for schule_name.
+  {% endblock %}
+  </br>
+  {% block sec_content %}
+  <p>Most efficient tool to manage a school operation.</p>
   {% endblock %}
 </body>
 </html>

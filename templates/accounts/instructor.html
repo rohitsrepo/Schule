@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% block content %}
+	<h1>Welcome {{ user }} </h1>
+	<a href="">Home</a>
+        <a href="{% url 'all_course' %}">Courses</a>
+	<a href="">Groups</a>
+	<a href=""></a>
+{% endblock %}
+{% block sec_content %}
+	<a href="{% url 'my_course' %}">My Course</a>
+	<a href="">My Group</a>
+	<a href="">My Goal</a>
+	<a href="{% url 'register_url' %}">Add Student</a>
+{% endblock %}

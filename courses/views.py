@@ -8,6 +8,8 @@ from django.contrib.auth.decorators import login_required
 from django.shortcuts import get_object_or_404,get_list_or_404
 from django.core.urlresolvers import reverse
 from django.http import HttpResponse
+from django.core.paginator import Paginator,PageNotAnInteger,EmptyPage
+from accounts.models import SchuleUser
 #Course registration
 #permission create and check
 
@@ -93,3 +95,50 @@ def FlipMembership(request,course_id,user_id):
 
 	#redirect(request.META.HTTP_REFERER)
 	
+@login_required
+def UserCourses(request,user_id=None):
+	if user_id is None:
+		user_id = request.user.id
+		user = request.user
+	else:
+		user = get_object_or_404(SchuleUser,pk=user_id)		
+	
+	try:
+		course_list = user.course_set.all()
+	except Course.DoesNotExist:
+		course_list =[]
+	
+	paginator = Paginator(course_list,5)
+	page = request.GET.get('page')
+
+	try:
+		courses = paginator.page(page)
+	except PageNotAnInteger:
+		courses = paginator.page(1)
+	except EmptyPage:
+		courses = paginator.page(paginator.num_pages)
+
+	return render_to_response('courses/MyCourse.html',{
+		'courses':courses,
+	},context_instance=RequestContext(request))
+
+@login_required
+def AllCourses(request):
+	try:
+		course_list = Course.objects.all()
+	except Course.DoesNotExist:
+		course_list =[]
+	
+	paginator = Paginator(course_list,5)
+	page = request.GET.get('page')
+
+	try:
+		courses = paginator.page(page)
+	except PageNotAnInteger:
+		courses = paginator.page(1)
+	except EmptyPage:
+		courses = paginator.page(paginator.num_pages)
+
+	return render_to_response('courses/AllCourse.html',{
+		'courses':courses,
+	},context_instance=RequestContext(request))

@@ -4,6 +4,7 @@
 	{% for poll in polls%}
 		<a href="{% url 'pollHome' course.id poll.id %}">{{ poll.title }}</a>
 	{% endfor %}
+
 	<div class="pagination">
     		<span class="step-links">
        			{% if polls.has_previous %}

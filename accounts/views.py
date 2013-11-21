@@ -3,11 +3,15 @@ from django.core.urlresolvers import reverse
 from django.conf import settings
 from django.template import RequestContext
 from accounts.forms import UserRegistrationForm
+from django.contrib.auth.decorators import login_required
+from django.template import RequestContext
+from accounts.models import SchuleUser
 
 #User registration
+# Should be only entry point for registering user
 def register(request):
   if request.method =='POST':
-    form = UserRegistrationForm(request.POST)
+    form = UserRegistrationForm(request.POST,user=request.user.id)
     if form.is_valid():
       #user = User.objects.create_user(form.cleaned_data['username'], None, form.cleaned_data['password1'])
       #user.save()
@@ -19,6 +23,20 @@ def register(request):
   return render_to_response('accounts/register.html', {
     'form': form,
 },context_instance=RequestContext(request))
+
+
+#User home.
+@login_required
+def userHome(request):
+  userType = request.user.userType
+  if userType == 'ST':
+    return render_to_response('accounts/student.html',
+	context_instance=RequestContext(request))
+  elif userType =='IN':
+    return render_to_response('accounts/instructor.html',
+	context_instance=RequestContext(request))
+  else:
+    return redirect('/admin/')
 
 # Generates vigilance key for user
 def GenVigKey():

@@ -9,5 +9,6 @@ urlpatterns = patterns('',
 )
 
 urlpatterns += patterns('accounts.views',
-    url(r'^register/','register',name="register_url"),
+    url(r'^register','register',name="register_url"),
+    url(r'^home','userHome',name="user_home"),
 )

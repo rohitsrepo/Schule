@@ -161,7 +161,7 @@ AUTH_USER_MODEL = 'accounts.SchuleUser'
 
 
 HOME = '/schule_name'
-USER_HOME = '/schule_name'
-LOGIN_REDIRECT_URL = '/schule_name/'
+USER_HOME = '/schule_name/accounts/home'
+LOGIN_REDIRECT_URL = '/schule_name/accounts/home'
 LOGIN_URL = '/schule_name/accounts/login'
 LOGOUT_URL = '/schule_name/accounts/logout'

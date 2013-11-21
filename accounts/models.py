@@ -6,7 +6,13 @@ from django.contrib.auth.models import AbstractUser
 # Create your models here.
 
 class SchuleUser(AbstractUser):
-	userType = models.CharField(max_length =10)
+	userTypeChoices = (
+		('ST','Student'),
+		('IN','Instructor'),
+		('MA','Manager'),
+	)
+
+	userType = models.CharField(max_length =2, choices = userTypeChoices, default = 'ST')
 
 	# Split as Town, state, country, postal code etc.
 	addressLine1 = models.CharField(max_length =100,blank =True)
@@ -25,5 +31,9 @@ class SchuleUser(AbstractUser):
 	
 	class Meta:
 		app_label = "accounts"
-
+		permissions = (
+			('create_edit_instructor',"Can create or edit instructors."),
+			('create_edit_student',"Can create or edit students."),
+			('create_edit_manager',"Can create or edit manager."),
+		)
 #admin.site.register(SchuleUser)

@@ -32,7 +32,16 @@ class UserRegistrationForm(forms.ModelForm):
     password2 = forms.CharField(label=_("Password confirmation"),
         widget=forms.PasswordInput,
         help_text=_("Enter the same password as above, for verification."))
+ 
+    session_user = ''
 
+    def __init__(self,*args,**kwargs):
+	if 'user' in kwargs.keys():
+	    print "GETTING USER WITH ID" 
+	    self.session_user = SchuleUser.objects.get(pk = kwargs.pop('user',None))
+
+	super(UserRegistrationForm,self).__init__(*args,**kwargs)
+	
     class Meta:
         model = SchuleUser
        	fields =('username','email','first_name','last_name','userType','addressLine1','addressLine2','state','country','postalCode','countryCode','phone','birthDate')
@@ -55,28 +64,50 @@ class UserRegistrationForm(forms.ModelForm):
                 self.error_messages['password_mismatch'])
         return password2
 
+    def clean_userType(self):
+	#cleaned_data = super(UserRegistrationForm,self).clean()
+	
+	userType = self.cleaned_data.get('userType');
+
+	#session_user = request.user
+	if(userType == 'IN'):
+		if not(self.session_user.has_perm('accounts.create_edit_instructor')):
+			raise forms.ValidationError(self.session_user.username+' Does not have permission to create/edit users of type Instructor')
+	elif(userType == 'MA'):
+		if not(self.session_user.has_perm('accounts.create_edit_manager')):
+			raise forms.ValidationError(self.session_user.username+' Does not have permission to create/edit users of type Manager')
+	elif(userType=='ST'):
+		if not(self.session_user.has_perm('accounts.create_edit_student')):
+			raise forms.ValidationError(self.session_user.username+' Does not have permission to create/edit users of type Student')
+
+	return userType
+
     def save(self, commit=True):
         user = super(UserRegistrationForm, self).save(commit=False)
         user.set_password(self.cleaned_data["password1"])
 
-	
+	userType = self.cleaned_data.get('userType');
+
+	#session_user = request.user
+	if(userType == 'IN'):
+		group = Group.objects.get(name='Instructor')
+	elif(userType == 'MA'):
+		user.is_staff = True
+		group = Group.objects.get(name='Manager')
+	elif(userType=='ST'):
+		group = Group.objects.get(name = 'Student')
 
 	# Generate Vigilance Key for user
 	user.vigilanceKey = GenVigKey()
-
+	
         if commit:
             user.save()
 
 	    # Add user to the corresponding Group
-	    userType = self.cleaned_data.get('userType');
-	    group =''
-	    if(userType == 'Teacher'):
-		group = Group.objects.get(name='Teacher')
-	    elif(userType == 'Management'):
-		group = Group.objects.get(name='Management')
-	    else:
-		group = Group.objects.get(name = 'Student')
 	    user.groups.add(group)
+	else:
+		#TODO: Issue a warning in the logs about group being not added
+		pass
         return user
 
 class UserChangeForm(forms.ModelForm):
