@@ -1,8 +1,8 @@
 from django.shortcuts import render_to_response,redirect
 from django.conf import settings
 from django.template import RequestContext
-from courses.forms import CourseForm,CourseMemberForm
-from courses.models import Course,CourseMembership
+from courses.forms import CourseForm, CourseMemberForm, CourseResourceForm
+from courses.models import Course, CourseMembership, CourseResource
 #from courses.signals import CreateCourseMembership 
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import get_object_or_404,get_list_or_404
@@ -10,6 +10,7 @@ from django.core.urlresolvers import reverse
 from django.http import HttpResponse
 from django.core.paginator import Paginator,PageNotAnInteger,EmptyPage
 from accounts.models import SchuleUser
+from django.http import HttpResponseNotFound
 #Course registration
 #permission create and check
 
@@ -18,12 +19,12 @@ def RegisterCourse(request):
 	if request.method =='POST':
     		form = CourseForm(request.POST,request.FILES)
 
-	if form.is_valid():
-		newCourse = form.save(commit=False)
-		newCourse.save(user = request.user)
-
-		#CreateCourseMembership.send(sender = Course,instance=newCourse,user=request.user,created = True)
-		return redirect(reverse('course_home_url', args(newCourse.id,))) # Redirect after POST
+		if form.is_valid():
+			newCourse = form.save(commit=False)
+			newCourse.save(user = request.user)
+	
+			#CreateCourseMembership.send(sender = Course,instance=newCourse,user=request.user,created = True)
+			return redirect(reverse('course_home', args=(newCourse.id,))) # Redirect after POST
 	else:
 		form = CourseForm() # An unbound form
 
@@ -31,6 +32,11 @@ def RegisterCourse(request):
     		'form': form,
 	},context_instance=RequestContext(request))
 
+@login_required
+def CoursePage(request):
+	return render_to_response('courses/coursePage.html',{
+	'events':'',
+	},context_instance=RequestContext(request))
 
 #decide on membership policy- members only view....or all with restricted access
 @login_required
@@ -58,9 +64,9 @@ def CourseHome(request,id):
 @login_required
 def CourseMember(request,id):
 	course = get_object_or_404(Course,pk=id)	
-	courseMembers = (get_list_or_404(CourseMembership.objects.all().order_by('userType'),course__id__exact=id))
+	courseMembers = (get_list_or_404(CourseMembership.objects.all().order_by('user'),course__id__exact=id))
 	
-	if request.method== 'POST':
+	if request.method == 'POST':
 		form = CourseMemberForm(request.POST)
 		
 		if form.is_valid():
@@ -68,7 +74,7 @@ def CourseMember(request,id):
 			new_member.course = course
 			new_member.save()
 
-			return redirect(reverse('course_member_url',args=(id,)))
+			return redirect(reverse('course_member',args=(id,)))
 	else:
 		form = CourseMemberForm(course_id=id)
 	return render_to_response('courses/courseMember.html', {
@@ -86,12 +92,14 @@ def FlipMembership(request,course_id,user_id):
 		course.userType = 'ST'
 	elif(course.userType == 'ST'):
 		course.userType = 'MO'
+	elif(course.userType=='OW'):
+		pass
 	else:
 		return HttpResponseNotFound("<h1>Not a valid request</h1>")
 
 	course.save()
 	#respond by redirecting to original page.
-	return redirect(reverse('course_member_url',args=(course_id,)))
+	return redirect(reverse('course_member',args=(course_id,)))
 
 	#redirect(request.META.HTTP_REFERER)
 	
@@ -104,7 +112,7 @@ def UserCourses(request,user_id=None):
 		user = get_object_or_404(SchuleUser,pk=user_id)		
 	
 	try:
-		course_list = user.course_set.all()
+		course_list = user.course_set.all().order_by('-startDate')
 	except Course.DoesNotExist:
 		course_list =[]
 	
@@ -125,7 +133,7 @@ def UserCourses(request,user_id=None):
 @login_required
 def AllCourses(request):
 	try:
-		course_list = Course.objects.all()
+		course_list = Course.objects.all().order_by('-startDate')
 	except Course.DoesNotExist:
 		course_list =[]
 	
@@ -142,3 +150,66 @@ def AllCourses(request):
 	return render_to_response('courses/AllCourse.html',{
 		'courses':courses,
 	},context_instance=RequestContext(request))
+
+
+@login_required
+def RegisterCourseResource(request,course_id):
+	course = get_object_or_404(Course,pk=course_id)
+	
+	if request.method == 'POST':
+		form = CourseResourceForm(request.POST,request.FILES)
+	
+		if form.is_valid():
+			res = form.save(commit=False)
+			res.course = course
+			res.save()
+			
+			return redirect(reverse('course_resource_page' , args=(course_id, )))
+	
+	else:
+		form = CourseResourceForm()
+
+	return render_to_response('courses/registerResource.html',{
+		'course':course,
+		'form':form,
+	},context_instance=RequestContext(request))
+
+@login_required
+def CourseResourcePage(request,course_id):
+	course = get_object_or_404(Course,pk = course_id)
+	try:
+		res_list = CourseResource.objects.filter(course = course_id).order_by('-date')
+	except CourseResource.DoesNotExist:
+		res_list = []
+
+	paginator = Paginator(res_list,7)
+
+	page = request.GET.get('page')
+
+	try:
+		res = paginator.page(page)
+	except PageNotAnInteger:
+		res = paginator.page(1)
+	except EmptyPage:
+		res = paginator.page(paginator.num_pages)
+
+	return render_to_response('courses/courseResource.html',{
+		'resources':res,
+		'course':course,
+	},context_instance=RequestContext(request))
+
+	
+	
+@login_required
+def CourseResourceHome(request,course_id,res_id):
+	course = get_object_or_404(Course,pk=course_id)
+
+	try:
+		res = CourseResource.objects.get(pk=res_id)
+	except CourseResource.DoesNotExist:
+		res = []
+
+	return render_to_response('courses/courseResourceHome.html',{
+		'course':course,
+		'resource':res,
+		},context_instance=RequestContext(request))

@@ -1,12 +1,12 @@
 from django.shortcuts import render_to_response, redirect, get_object_or_404
 from django.template import RequestContext
-from polls.forms import CoursePollForm
+from polls.forms import CoursePollForm, CoursePollOptionForm
 from courses.models import Course
 from polls.models import CoursePoll, CoursePollOption
 from django.contrib.auth.decorators import login_required
 from django.core.urlresolvers import reverse
 from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
-from django.forms.models import modelformset_factory
+from django.forms.models import inlineformset_factory
 from django.http import Http404
 
 
@@ -21,33 +21,104 @@ from django.http import Http404
 @login_required
 def CreatePoll(request,course_id):
 	course = get_object_or_404(Course,pk = course_id)
-	#TODO - implement dynamic add more on the frontend using ajax.
-	poll_op_model_formset = modelformset_factory(CoursePollOption, fields=('name',), extra=2, max_num=4)
-
+	#TODO - implement dynamic add more on the frontend using ajax. Also restrict the number of options that can be added.
+	
 	if request.method == 'POST':
 		poll_form = CoursePollForm(request.POST)
-		poll_op_formset = poll_op_model_formset(request.POST)
-
-		if poll_form.is_valid() and poll_op_formset.is_valid():
+		
+		if poll_form.is_valid():
 			poll = poll_form.save(commit=False)
 			poll.course = course
 			poll.creater = request.user
 			poll.save()
 			
-			poll_ops = poll_op_formset.save(commit = False)
-			for poll_op in poll_ops:
-				poll_op.poll = poll
-				poll_op.save()
-				
-			return redirect(reverse('pollHome', args=(course.id, poll.id,)))
+						
+			return redirect(reverse('course_poll_op', args=(course.id, poll.id,)))
 	else:
 		poll_form = CoursePollForm()
-		poll_op_formset = poll_op_model_formset()
-
+		
 	return render_to_response('courses/createPoll.html',{
 		'course':course,
 		'poll_form':poll_form,
+		},context_instance=RequestContext(request))
+
+@login_required
+def CreatePollOption_old(request,course_id,poll_id):
+	course = get_object_or_404(Course,pk = course_id)
+	poll = get_object_or_404(CoursePoll,pk =poll_id)
+
+	poll_op_inline_formset = inlineformset_factory(CoursePoll,CoursePollOption,extra=2)
+	
+	if request.method == 'POST':
+                poll_op_formset = poll_op_inline_formset(request.POST,instance=poll)
+
+                if poll_op_formset.is_valid():
+			poll_op_formset.save()
+                        return redirect(reverse('course_pollHome', args=(course.id, poll.id,)))
+        else:
+                poll_op_formset = poll_op_inline_formset(instance=poll)
+
+	return render_to_response('courses/addPollOp.html',{
+		'course':course,
+		'poll':poll,
+		'poll_op_fomset':poll_op_formset,
+		},context_instance=RequestContext(request))
+		
+@login_required
+def CreatePollOption(request,course_id,poll_id):
+	course = get_object_or_404(Course,pk=course_id)
+	poll = get_object_or_404(CoursePoll,pk = poll_id)
+
+	try:
+		poll_ops = CoursePollOption.objects.filter(poll=poll_id)
+	except CoursePollOption.DoesNotExist:
+		poll_ops = []
+
+	if request.method == 'POST':
+		form = CoursePollOptionForm(request.POST)
+		op = form.save(commit=False)
+
+		op.poll = poll
+		op.save()
+	
+		return redirect(reverse('course_poll_op', args=(course_id,poll_id)))
+
+	else:
+		form = CoursePollOptionForm()
+
+	return render_to_response('courses/addPollOp.html',{
+		'course':course,
+		'poll':poll,
+		'form':form,
+		'poll_ops':poll_ops
+		},context_instance=RequestContext(request))
+
+@login_required
+def EditPoll(request,course_id,poll_id):
+	course = get_object_or_404(Course,pk=course_id)
+	poll= get_object_or_404(CoursePoll,pk=poll_id)
+
+	poll_op_inlineformset = inlineformset_factory(CoursePoll,CoursePollOption,extra=1, fields=('name',))
+
+	if request.method  == 'POST':
+		poll_form = CoursePollForm(request.POST,instance=poll)
+		poll_op_formset = poll_op_inlineformset(request.POST, instance=poll)
+
+		if poll_form.is_valid() and poll_op_formset.is_valid():
+			poll_form.save()
+			poll_op_formset.save()
+
+		return redirect(reverse('course_poll_edit', args=(course_id, poll_id)))
+
+	else:
+		poll_form = CoursePollForm(instance=poll)
+		poll_op_formset  = poll_op_inlineformset(instance=poll)		
+
+	return render_to_response('courses/editPoll.html',{
+		'course':course,
+		'poll_form':poll_form,
 		'poll_op_formset':poll_op_formset,
+		'poll':poll,
 		},context_instance=RequestContext(request))
 
 #Permissions
@@ -88,7 +159,7 @@ def PollHome(request,course_id,poll_id):
 		# If user has already voted -> redirect
 		#voter_ids = [voter.id for voter in poll.voters]
 		if len(poll.voters.filter(pk=request.user.id)) >0:
-			return redirect(reverse('pollStatus', args=(course_id,poll_id,)))
+			return redirect(reverse('course_pollStatus', args=(course_id,poll_id,)))
 		
 		if request.method == 'POST':
 			selected_poll_op_id = request.POST.get('vote')
@@ -98,7 +169,7 @@ def PollHome(request,course_id,poll_id):
 	
 			poll.voters.add(request.user.id)
 			
-			return redirect(reverse('pollStatus', args=(course_id,poll_id,)))
+			return redirect(reverse('course_pollStatus', args=(course_id,poll_id,)))
 
 	except (CoursePoll.DoesNotExist, CoursePollOption.DoesNotExist) as e:
 		raise Http404

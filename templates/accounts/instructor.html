@@ -1,14 +1,25 @@
-{% extends "base.html" %}
+{% extends "index.html" %}
+{% block header %}
+	<h1><a href="{% url 'user_home' %}"><span class='logo_colour'>_{{ user }}</span></a></h1>
+	<h2>Instructor</h2>
+{% endblock %}
+{% block links %}
+	<li><a href="{% url 'user_home' %}">Home</a></li>
+        <li><a href="{% url 'my_course' %}">Courses</a></li>
+	<li><a href="">Groups</a></li>
+	<li><a href="">Students</a>
+	    <ul>
+		<li><a href="{% url 'register_user' %}">Add</a></li>
+	    </ul>
+	</li>
+{% endblock %}
+{% block side_upper %}
+	<h3>Upcoming</h3>
+	<h4>Assessment</h4>
+	<h5>Janauary 1st, 2013</h5>
+	<p>Assessment for group physics is due on..</br><a href="">Read more</a></p>
+{% endblock %}
 {% block content %}
 	<h1>Welcome {{ user }} </h1>
-	<a href="">Home</a>
-        <a href="{% url 'all_course' %}">Courses</a>
-	<a href="">Groups</a>
-	<a href=""></a>
-{% endblock %}
-{% block sec_content %}
-	<a href="{% url 'my_course' %}">My Course</a>
-	<a href="">My Group</a>
-	<a href="">My Goal</a>
-	<a href="{% url 'register_url' %}">Add Student</a>
+	<h2>Here are your latest updates.</h2>
 {% endblock %}

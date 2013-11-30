@@ -1,4 +1,4 @@
-{% extends "base.html" %}
+{% extends "index.html" %}
 
 {% block content %}
 
@@ -6,7 +6,7 @@
 <p>Your username and password didn't match. Please try again.</p>
 {% endif %}
 {% if not user.is_authenticated  %}
-	<form method="post" action="{% url "login_url" %}">
+	<form method="post" action="{% url "login" %}">
 	{% csrf_token %}
   	{{ form.as_table}}
 
@@ -16,4 +16,12 @@
 {% else  %}
  You are already authenticated.
 {% endif %}
+{% endblock %}
+{% block side_upper %}
+{% endblock %}
+{% block side_lower %}
+{% endblock %}
+{% block links %}
+{% endblock %}
+{% block footer %}
 {% endblock %}

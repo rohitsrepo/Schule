@@ -1,10 +1,23 @@
-{% extends "base.html" %}
+{% extends "courses/course.html" %}
+
+{% block header %}
+        <h1><a href="{% url 'course_home' course.id %}"  ><span class="logo_colour">_{{ course.name }}</span></a></h1>
+        <h2>Poll</h2>
+{% endblock %}
+
+{% block links %}
+	<li><a href="{% url 'course_pollsHome' course.id %}">Home</a></li>
+	<li><a href="{% url 'course_createPoll' course.id %}">Create</a></li>
+	<li><a href="">Link</a></li>
+{% endblock %}
+
 {% block content %}
 	<h1>POLLS</h1>
 	{% for poll in polls%}
-		<a href="{% url 'pollHome' course.id poll.id %}">{{ poll.title }}</a>
+		<a href="{% url 'course_pollHome' course.id poll.id %}">{{ poll.title }}</a><br><br>
 	{% endfor %}
 
+	<br><br>
 	<div class="pagination">
     		<span class="step-links">
        			{% if polls.has_previous %}

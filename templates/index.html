@@ -1,0 +1,102 @@
+﻿
+<!DOCTYPE HTML>
+<html>
+
+<head>
+  {% load staticfiles %}
+
+  <title>scenic_photo</title>
+  <meta name="description" content="website description" />
+  <meta name="keywords" content="website keywords, website keywords" />
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+  <link rel="stylesheet" type="text/css" href="{% static 'css/style.css' %} "  />
+  <!-- modernizr enables HTML5 elements and feature detects -->
+    <script type="text/javascript" src="{% static 'js/modernizr-1.5.min.js '%}'"></script>
+</head>
+
+<body>
+  <div id="main">
+    <header>
+      <div id="logo">
+        <div id="logo_text">
+          <!-- class="logo_colour", allows you to change the colour of the text -->
+		  {% block header %}
+          <h1><a href="{% url 'home' %}"  >SCHULE<span class="logo_colour">_NAME</span></a></h1>
+          <h2>Information. Knowledge. Creativity.</h2>
+		  {% endblock %}
+        </div>
+      </div>
+      <nav>
+        <div id="menu_container">
+          <ul class="sf-menu" id="nav">
+		    {% block links %}
+            <li><a href="{% url 'home' %}" >Home</a></li>
+            <li><a href="">Events</a></li>
+            <li><a href="">Notices</a></li>
+            <li><a href="">Faculty</a></li>
+		    {% endblock %}
+	    {% if user.is_authenticated %}	
+            <li><a href="#">Accounts</a>
+              <ul>
+                <li><a href="{% url 'user_home' %}">Home</a></li>
+                <li><a href="{% url 'logout' %}">Logout</a></li>
+		<li><a href ="">Settings</a></li>
+             </ul>
+            </li>
+	    {% endif %}
+            <li><a href="">Contact Us</a></li>
+          </ul>
+        </div>
+      </nav>
+    </header>
+    <div id="site_content">
+      <div id="sidebar_container">
+        <div class="sidebar">
+		  {% block side_upper %}
+          <h3>Upcoming</h3>
+          <h4>Annual Day</h4>
+          <h5>January 1st, 2012</h5>
+          <p>Like every year school will be holding annual function celebration on... <br /><a href="#">Read more</a></p>
+		  {% endblock %}
+        </div>
+        <div class="sidebar">
+	          {% block side_lower %}
+          <h3>Useful Links</h3>
+          <ul>
+            <li><a href="#">First Link</a></li>
+            <li><a href="#">Another Link</a></li>
+            <li><a href="#">And Another</a></li>
+            <li><a href="#">One More</a></li>
+            <li><a href="#">Last One</a></li>
+          </ul>
+		  {% endblock %}
+        </div>
+      </div>
+      <div class="content">
+		{% block content %}
+        <h1>Welcome to Schule_NAME</h1>
+        <p>At Schule_NAME Primary, we have a team of teachers new to the school since the previous Ofsted inspection, who show consistently good and some outstanding practice in leading learning. They are highly skilled and motivated, and it has been my pleasure to work with them since January. I look forward to embedding consistently outstanding teaching and learning with them during the coming months and years</p>
+        <p>This template is written entirely in <strong>HTML5</strong> and <strong>CSS3</strong>. The photo used in the design was taken by me.</p>
+        <p>You can view more <a href="http://www.css3templates.co.uk">here</a>.</p>
+        <p>This template is a fully documented 5 page website, with an <a href="examples.html">examples</a> page that gives examples of all the styles available with this design. There is also a working PHP contact form on the contact page.</p>
+		{% endblock %}
+      </div>
+    </div>
+		{% block footer %}
+    <footer>
+      <p>Copyright &copy; Schule_name | <a href="http://www.9gag.com">Centre for wisdom.</a></p>
+    </footer>
+		{% endblock %}
+  </div>
+  <p>&nbsp;</p>
+  <!-- javascript at the bottom for fast page loading -->
+  <script type="text/javascript" src="{% static 'js/jquery.js' %}"></script>
+  <script type="text/javascript" src="{% static 'js/jquery.easing-sooper.js' %}"></script>
+  <script type="text/javascript" src="{% static 'js/jquery.sooperfish.js' %}"></script>
+  <script type="text/javascript">
+    $(document).ready(function() {
+      $('ul.sf-menu').sooperfish();
+    });
+  </script>
+</body>
+</html>

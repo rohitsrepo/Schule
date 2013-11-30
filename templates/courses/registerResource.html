@@ -1,0 +1,19 @@
+{% extends "courses/course.html" %}
+
+{% block header %}
+        <h1><a href="{% url 'course_home' course.id %}"><span class="logo_colour">_{{ course.name }}</a></h1>
+        <h2>Resources</h2>
+{% endblock %}
+
+
+{% block content %}
+	<h1>Resources</h1>
+        <h2>Add a new resource to the course:</h2>
+        </br>
+        <form method="post" enctype="multipart/form-data" action="{% url 'register_course_resource' course.id %}">
+        {% csrf_token %}
+        {{ form.as_ul  }}
+                <input type="submit" value="register" />
+                <input type="hidden" name="next" value="{{ next }}" />
+        </form>
+{% endblock %}

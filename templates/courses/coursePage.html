@@ -1,0 +1,23 @@
+{% extends "index.html" %}
+
+{% block header %}
+	<h1><a href="{% url 'course_page' %}"><span class="logo_colour">_Courses</span></a></h1>
+	<h2>Home</h2>
+{% endblock %}
+
+{% block links %}
+	<li><a href="{% url 'all_course' %}">All</a></li>
+	<li><a href="{% url 'my_course' %}">My Courses</a></li>
+	<li><a href="{% url 'register_course' %}">Create</a></li>	
+{% endblock %}
+
+{% block content %}
+	<h1>Updates:</h1>
+{% endblock %}
+
+{% block side_upper %}
+          <h3>Upcoming</h3>
+          <h4>New Course</h4>
+          <h5>July 21st, 2012</h5>
+          <p>New course added to the colletion... <br /><a href="#">Read more</a></p>	
+{% endblock %}

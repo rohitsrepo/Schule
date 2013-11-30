@@ -1,0 +1,39 @@
+{% extends "courses/course.html" %}
+
+{% block header %}
+        <h1><a href="{% url 'course_home' course.id %}"><span class="logo_colour">_{{ course.name }}</a></h1>
+        <h2>Resources</h2>
+{% endblock %}
+
+{% block content %}
+	<h1>RESOURCES</h1>                 
+	{% if resources.object_list %}
+	        {% for res in resources%}
+	                <a href="{% url 'course_resource_home' course.id res.id %}">{{ res.title }}</a><br>
+	        {% endfor %}
+
+		<br><br><br>	
+	        <div class="pagination">
+	                <span class="step-links">
+	                        {% if resources.has_previous %}
+	                                <a href="?page={{ resources.previous_page_number }}">previous</a>
+	                        {% endif %}
+	
+	                <span class="current">
+	                        Page {{ resources.number }} of {{ resources.paginator.num_pages }}.
+	                </span>
+	
+	                {% if resources.has_next %}
+	                        <a href="?page={{ resources.next_page_number }}">next</a>
+	                {% endif %}
+	                </span>
+	        </div>
+	
+		<br><br>
+		<a href={% url 'register_course_resource' course.id %}> Add new</a>
+	{% else %}
+		<h2>No resources have been added yet.</h2>
+		<br><br><br><br><br><br><a href={% url 'register_course_resource' course.id %}> Add new</a>
+	{% endif %}
+
+{% endblock %}

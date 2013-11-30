@@ -6,7 +6,10 @@ from courses.signals import CreateCourseMembership
 # Create your models here.
 
 def get_upload_file_name(instance,filename):
-	return 'uploadedFiles/%s_%s' % (str(time()).replace('.','_'),filename)
+	return 'uploadedFiles/Courses/%s/%s_%s' % (instance.name, str(time()).replace('.','_'), filename)
+
+def get_resource_file_name(instance,filename):
+	return 'uploadedFiles/Courses/%s/resources/%s_%s' % (instance.course.name, str(time()).replace('.','_'), filename)
 
 
 class Course(models.Model):
@@ -20,13 +23,14 @@ class Course(models.Model):
 	
 	def save(self,*args,**kwargs):
 		sendSignal = False
-		if 'user' in kwargs and self.pk is None:
+		if 'user' in kwargs.keys() and self.pk is None:
 			sendSignal = True
+			user = kwargs.pop('user',None)
 
 		super(Course,self).save(*args,**kwargs)
 		
 		if sendSignal:
-			CreateCourseMemberShip.send(sender =Course,instance =self,user =kwargs['user'],created=True)
+			CreateCourseMembership.send(sender =Course, instance =self, user =user, created=True)
 
 admin.site.register(Course)
 
@@ -43,7 +47,8 @@ class CourseMembership(models.Model):
 class CourseResource(models.Model):
 	title = models.CharField(max_length = 100)
 	description = models.TextField(blank=True)
-	data = models.FileField(upload_to=get_upload_file_name)
+	data = models.FileField(upload_to=get_resource_file_name)
+	date =  models.DateTimeField(auto_now_add=True)
 	course = models.ForeignKey(Course)
 
 admin.site.register(CourseResource)

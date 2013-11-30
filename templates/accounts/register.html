@@ -1,11 +1,14 @@
-{% extends "base.html" %}
-
+{% extends "accounts/instructor.html" %}
+{% block header %}
+	<h1> <a href="{% url 'register_user' %}"><span class="logo_colour">_Register</span></a> </h1>
+	<h2> Add a new one. </h2>
+{% endblock %}
 {% block content %}
 
 
-<form method="post" action="{% url 'register_url' %}">
+<form method="post" action="{% url 'register_user' %}">
 {% csrf_token %}
-{{ form  }}
+{{ form.as_ul  }}
 
 	<input type="submit" value="register" />
 	<input type="hidden" name="next" value="{{ next }}" />

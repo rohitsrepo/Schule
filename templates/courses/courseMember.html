@@ -1,20 +1,19 @@
-{% extends "base.html" %}
+{% extends "courses/course.html" %}
 
 {% block content %}
+	<ul>
+	<h1> Memebers of Course:{{ course.name }}</h1>
+	{% for member in courseMembers  %}
+		<li> User: {{ member.user  }} Type: <a href="{% url 'flip_course_membership' course_id=course.id user_id=member.user.id %}">{{ member.userType }}</a></li>
+	{% endfor %}
+	</ul>
+	
+	
+        <form method="post"  action="{% url 'course_member' course.id %}">
+        {% csrf_token %}
+        {{ form  }}
 
-<ul>
-<h1> Memebers of Course:{{ course.id  }} {{ course.name }}</h1>
-{% for member in courseMembers  %}
-	<li> User: {{ member.user  }} Type: <a href="{% url 'flip_course_membership' course_id=course.id user_id=member.user.id %}">{{ member.userType }}</a></li>
-{% endfor %}
-</ul>
-
-
-<form method="post"  action="{% url 'course_member_url' course.id %}">
-{% csrf_token %}
-{{ form  }}
-
-	<input type="submit" value="addMember" name='Add Member'/>
-	<input type="hidden" name="next" value="{{ next }}" />
-</form>
+                <input type="submit" value="addMember" name='Add Member'/>
+                <input type="hidden" name="next" value="{{ next }}" />
+        </form>
 {% endblock %}

@@ -1,22 +1,28 @@
-{% extends "base.html" %}
+{% extends "courses/coursePage.html" %}
+
+{% block header %}
+	<h1><a href="{% url 'course_page' %}"  ><span class="logo_colour">_Courses</span></a></h1>
+        <h2>My</h2>	
+{% endblock %}
+
 {% block content %}
 	<h1>My Courses</h1>
 	{% for course in courses %}
-		<a href="{% url 'course_home_url' courses.id %}">{{ course.name }}</a>
+		<a href="{% url 'course_home' course.id %}">{{ course.name }}</a></br>
 	{% endfor %}
 	
 	<div class="pagination">
 	    <span class="step-links">
-        	{% if contacts.has_previous %}
-        	    <a href="?page={{ contacts.previous_page_number }}">previous</a>
+        	{% if courses.has_previous %}
+        	    <a href="?page={{ courses.previous_page_number }}">previous</a>
    	        {% endif %}
 
         	<span class="current">
-            		Page {{ contacts.number }} of {{ contacts.paginator.num_pages }}.
+            		Page {{ courses.number }} of {{ courses.paginator.num_pages }}.
         	</span>
 
-        	{% if contacts.has_next %}
-        	    <a href="?page={{ contacts.next_page_number }}">next</a>
+        	{% if courses.has_next %}
+        	    <a href="?page={{ courses.next_page_number }}">next</a>
         	{% endif %}
     	    </span>
 	</div>
