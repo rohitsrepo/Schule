@@ -37,7 +37,7 @@ def CreatePoll(request,course_id):
 	else:
 		poll_form = CoursePollForm()
 		
-	return render_to_response('courses/createPoll.html',{
+	return render_to_response('polls/createPoll.html',{
 		'course':course,
 		'poll_form':poll_form,
 		},context_instance=RequestContext(request))
@@ -58,7 +58,7 @@ def CreatePollOption_old(request,course_id,poll_id):
         else:
                 poll_op_formset = poll_op_inline_formset(instance=poll)
 
-	return render_to_response('courses/addPollOp.html',{
+	return render_to_response('polls/addPollOp.html',{
 		'course':course,
 		'poll':poll,
 		'poll_op_fomset':poll_op_formset,
@@ -86,7 +86,7 @@ def CreatePollOption(request,course_id,poll_id):
 	else:
 		form = CoursePollOptionForm()
 
-	return render_to_response('courses/addPollOp.html',{
+	return render_to_response('polls/addPollOp.html',{
 		'course':course,
 		'poll':poll,
 		'form':form,
@@ -114,7 +114,7 @@ def EditPoll(request,course_id,poll_id):
 		poll_form = CoursePollForm(instance=poll)
 		poll_op_formset  = poll_op_inlineformset(instance=poll)		
 
-	return render_to_response('courses/editPoll.html',{
+	return render_to_response('polls/editPoll.html',{
 		'course':course,
 		'poll_form':poll_form,
 		'poll_op_formset':poll_op_formset,
@@ -127,11 +127,11 @@ def PollsHome(request,course_id):
 	#pull out all the polls for this course
 	course = get_object_or_404(Course,pk=course_id)
 	try:
-		polls = CoursePoll.objects.filter(course=course_id)
+		polls = CoursePoll.objects.filter(course=course_id).order_by('-id')
 	except CoursePoll.DoesNotExist:
 		raise Http404
 		
-	paginator = Paginator(polls,10)
+	paginator = Paginator(polls,7)
 	page = request.GET.get('page')
 	
 	try:
@@ -142,7 +142,7 @@ def PollsHome(request,course_id):
 		poll_list = paginator.page(paginator.num_pages)
 	
 	#show by pagination
-	return render_to_response('courses/pollsHome.html',{
+	return render_to_response('polls/pollsHome.html',{
 		'course':course,
 		'polls':poll_list,
 		})
@@ -154,7 +154,6 @@ def PollHome(request,course_id,poll_id):
 	course = get_object_or_404(Course,pk=course_id)
 	try:
 		poll = CoursePoll.objects.get(pk=poll_id)
-		poll_ops = CoursePollOption.objects.filter(poll = poll)
 
 		# If user has already voted -> redirect
 		#voter_ids = [voter.id for voter in poll.voters]
@@ -171,10 +170,15 @@ def PollHome(request,course_id,poll_id):
 			
 			return redirect(reverse('course_pollStatus', args=(course_id,poll_id,)))
 
-	except (CoursePoll.DoesNotExist, CoursePollOption.DoesNotExist) as e:
+		poll_ops = CoursePollOption.objects.filter(poll = poll)
+
+
+	except CoursePoll.DoesNotExist:
 		raise Http404
+	except CoursePollOption.DoesNotExist:
+		poll_ops=[]
 	
-	return render_to_response('courses/pollHome.html',{
+	return render_to_response('polls/pollHome.html',{
 		'course':course,
 		'poll':poll,
 		'poll_ops':poll_ops,
@@ -191,7 +195,7 @@ def PollStatus(request,course_id,poll_id):
 		#TODO - return page saying no options have been created yet for this poll
 		raise Http404
 
-	return render_to_response('courses/pollResult.html',{
+	return render_to_response('polls/pollResult.html',{
 		'course':course,
 		'poll':poll,
 		'poll_ops':poll_ops,

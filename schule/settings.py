@@ -1,7 +1,7 @@
 # Django settings for schule project.
 
 import os
-PROJECT_ROOT = '/home/ubuntu/virtuals/vrtl1/Schule/' 
+PROJECT_ROOT = '/home/rohit/Desktop/star/virtual/Schule/' 
 DEBUG = True
 TEMPLATE_DEBUG = DEBUG
 

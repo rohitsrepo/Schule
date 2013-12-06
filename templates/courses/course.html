@@ -9,7 +9,7 @@
 	<li><a href="{% url 'course_page' %}">Home</a></li>
 	<li><a href="{% url 'course_member' course.id %}"> Members </a></li>
 	<li><a href ="{% url 'course_pollsHome' course.id %}">Polls</a></li>
-	<li><a href="">Forums</a></li>
+	<li><a href="{% url 'course_forumsHome' course.id  %}">Forums</a></li>
 	<li><a href="">Assignments </a></li>
 	<li><a href="{% url 'course_resource_page' course.id %}">Resources</a></li>
 {% endblock %}
