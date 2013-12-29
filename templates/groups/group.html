@@ -1,0 +1,46 @@
+{% extends "index.html"  %}
+
+{% block header %}
+	<h1><a href="{% url 'group_home' group.id %}"><span class="logo_colour">_{{ group.name }}</a></h1>
+	<h2>Group</h2>
+{% endblock %}
+
+{% block links %}
+	<li><a href="{% url 'group_page' %}">Home</a></li>
+	<li><a href="{% url 'group_member' group.id %}"> Members </a></li>
+	<li><a href ="{% url 'group_pollsHome' group.id %}">Polls</a></li>
+	<li><a href="{% url 'group_forumsHome' group.id  %}">Forums</a></li>
+	<li><a href="">Assignments </a></li>
+	<li><a href="{% url 'group_resource_page' group.id %}">Resources</a></li>
+{% endblock %}
+
+{% block content %}
+	<h1>Welcome to {{ group.name }} </h1>
+	</br>
+	<p> {{ group.description  }}  </p>
+	</br>
+	{% if group.groupPhoto %}
+		<img src="{{ group.groupPhoto.url }}" >
+	{% endif %}
+{% endblock %}
+
+{% block side_upper %}
+	<h3>Upcoming</h3>
+        <h4>Mid Semester exam</h4>
+        <h5>February 24th, 2012</h5>
+        <p>The md semester exam is dated to ... <br /><a href="#">Read more</a></p>
+{% endblock %}
+
+{% block side_lower%}
+	<h3>Owner</h3>
+	<ul>
+	    <li><a href="">{{ groupAdmin }}</a></li>
+	</ul>
+	</br>
+	<h3>Moderators </h3>
+	<ul>
+	{% for mod in groupMods  %}
+		<li> {{ mod.user.username  }} </li>
+	{% endfor %}
+	</ul>
+{% endblock %}

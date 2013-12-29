@@ -1,0 +1,19 @@
+{% extends "forums/courses/forumsHome.html" %}
+{% block content %}
+        <h1> Edit</h1>
+
+        <h2>Forum</h2>
+        <form method="post" enctype="multipart/form-data" action="{% url 'course_forum_edit' course.id forum.id %}">
+        {% csrf_token %}
+                {{ forum_form.as_ul }}<br><br>
+        
+                <input type="submit" value="Submit Changes" />
+                <input type="hidden" name="next" value="{{ next }}"/>
+
+        </form>
+
+        <br><br>
+        <a href="{% url 'course_forumHome' course.id forum.id %}">Go to forum.</a>
+{% endblock %}
+
+

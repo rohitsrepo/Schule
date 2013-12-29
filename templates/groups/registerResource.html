@@ -1,0 +1,19 @@
+{% extends "groups/group.html" %}
+
+{% block header %}
+        <h1><a href="{% url 'group_home' group.id %}"><span class="logo_colour">_{{ group.name }}</a></h1>
+        <h2>Resources</h2>
+{% endblock %}
+
+
+{% block content %}
+	<h1>Resources</h1>
+        <h2>Add a new resource to the group:</h2>
+        </br>
+        <form method="post" enctype="multipart/form-data" action="{% url 'register_group_resource' group.id %}">
+        {% csrf_token %}
+        {{ form.as_ul  }}
+                <input type="submit" value="register" />
+                <input type="hidden" name="next" value="{{ next }}" />
+        </form>
+{% endblock %}

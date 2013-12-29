@@ -1,0 +1,12 @@
+{% extends "groups/groupPage.html" %}
+
+{% block content %}
+	<h1>Add a new group:</h1>
+	</br>
+	<form method="post" enctype="multipart/form-data" action="{% url 'register_group' %}">
+	{% csrf_token %}
+	{{ form.as_ul  }}
+		<input type="submit" value="register" />
+		<input type="hidden" name="next" value="{{ next }}" />
+	</form>
+{% endblock %}

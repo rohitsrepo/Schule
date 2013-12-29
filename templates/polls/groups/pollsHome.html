@@ -1,0 +1,36 @@
+{% extends "groups/group.html" %}
+
+{% block header %}
+        <h1><a href="{% url 'group_home' group.id %}"  ><span class="logo_colour">_{{ group.name }}</span></a></h1>
+        <h2>Poll</h2>
+{% endblock %}
+
+{% block links %}
+	<li><a href="{% url 'group_pollsHome' group.id %}">Home</a></li>
+	<li><a href="{% url 'group_createPoll' group.id %}">Create</a></li>
+	<li><a href="">Link</a></li>
+{% endblock %}
+
+{% block content %}
+	<h1>POLLS</h1>
+	{% for poll in polls%}
+		<a href="{% url 'group_pollHome' group.id poll.id %}">{{ poll.title }}</a><br><br>
+	{% endfor %}
+
+	<br><br>
+	<div class="pagination">
+    		<span class="step-links">
+       			{% if polls.has_previous %}
+            			<a href="?page={{ polls.previous_page_number }}">previous</a>
+        		{% endif %}
+
+        	<span class="current">
+            		Page {{ polls.number }} of {{ polls.paginator.num_pages }}.
+        	</span>
+
+        	{% if polls.has_next %}
+            		<a href="?page={{ polls.next_page_number }}">next</a>
+        	{% endif %}
+    		</span>
+	</div>
+{% endblock %}

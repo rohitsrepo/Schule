@@ -1,0 +1,37 @@
+{% extends "groups/group.html" %}
+
+{% block header %}
+        <h1><a href="{% url 'group_home' group.id %}"  ><span class="logo_colour">_{{ group.name }}</span></a></h1>
+        <h2>Forum</h2>
+{% endblock %}
+
+{% block links %}
+        <li><a href="{% url 'group_forumsHome' group.id %}">Home</a></li>
+        <li><a href="{% url 'group_createForum' group.id %}">Create</a></li>
+        <li><a href="">Link</a></li>
+{% endblock %}
+
+{% block content %}
+        <h1>FORUMS</h1>
+        {% for forum in forums%}
+                <a href="{% url 'group_forumHome' group.id forum.id %}">{{ forum.title }}</a><br><br>
+        {% endfor %}
+
+        <br><br>
+        <div class="pagination">
+                <span class="step-links">
+                        {% if forums.has_previous %}
+                                <a href="?page={{ forums.previous_page_number }}">previous</a>
+                        {% endif %}
+
+                <span class="current">
+                        Page {{ forums.number }} of {{ forums.paginator.num_pages }}.
+                </span>
+
+                {% if forums.has_next %}
+                        <a href="?page={{ forums.next_page_number }}">next</a>
+                {% endif %}
+                </span>
+        </div>
+{% endblock %}
+

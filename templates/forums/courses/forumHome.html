@@ -1,0 +1,29 @@
+{% extends "forums/courses/forumsHome.html" %}
+{% block content %}
+        <h1>{{ forum.title }}</h1>
+        <p>{{ forum.description }}</p>
+
+	{% if forum.data %}
+		<a href="{{ forum.data.url }}">Uploads</a><br><br><br>
+	{% endif %}
+
+        {% if comments %}
+		<ul>
+		{% for comment in comments %}
+			<br><li><h3>{{ comment.commenter }}:</h3>
+			{{ comment.comment}} <br>
+			{{ comment.commentDate }}</li>
+		{% endfor%}
+		</ul>
+		<br><br>
+        {% else %}
+                <h3>Express your views:</h3>
+        {% endif %}
+
+         <form method="post" action="{% url 'course_forumHome' course.id forum.id %}">               {% csrf_token %}
+			{{ comment_form  }}
+                	<input type="submit" value="Comment" name="Comment" />
+                	<input type="hidden" name="next" value= {{ next }} />
+          </form>
+
+{% endblock %}

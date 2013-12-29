@@ -1,0 +1,29 @@
+{% extends "groups/groupPage.html" %}
+
+{% block header %}
+	<h1><a href="{% url 'group_page' %}"  ><span class="logo_colour">_Groups</span></a></h1>
+        <h2>My</h2>	
+{% endblock %}
+
+{% block content %}
+	<h1>My Groups</h1>
+	{% for group in groups %}
+		<a href="{% url 'group_home' group.id %}">{{ group.name }}</a></br>
+	{% endfor %}
+	
+	<div class="pagination">
+	    <span class="step-links">
+        	{% if groups.has_previous %}
+        	    <a href="?page={{ groups.previous_page_number }}">previous</a>
+   	        {% endif %}
+
+        	<span class="current">
+            		Page {{ groups.number }} of {{ groups.paginator.num_pages }}.
+        	</span>
+
+        	{% if groups.has_next %}
+        	    <a href="?page={{ groups.next_page_number }}">next</a>
+        	{% endif %}
+    	    </span>
+	</div>
+{% endblock %}

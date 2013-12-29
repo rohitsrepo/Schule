@@ -1,0 +1,31 @@
+{% extends "polls/courses/pollsHome.html" %}
+{% block content %}
+	<h1>{{ poll.description }}<h1/>
+	<h2>Add options to the poll.</h2>
+		
+	{% if poll_ops %}	
+		<ul>
+		{% for poll_op in poll_ops %}
+			<li>{{ poll_op.name }}</li><br>
+		{% endfor %}
+		</ul>
+	{% else %}
+		<br><h3>No options added yet.</h3>
+	{% endif %}
+	
+	<br><br>
+        <form method="post"  action="{% url 'course_poll_op' course.id poll.id %}">
+        {% csrf_token %}
+	        {{ form }}
+                <input type="submit" value="Add" />
+                <input type="hidden" name="next" value="{{ next }}"/>
+        </form>
+
+	<br><br>
+	<a href="{% url 'course_pollHome' course.id poll.id %}">Go to poll.</a>
+{% endblock %}
+
+
+
+
+
