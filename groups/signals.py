@@ -1,4 +1,5 @@
 from django.dispatch import Signal, receiver
+from updates.models import Follow
 
 
 #Signal for saving the corresponding entry in the GroupMembership
@@ -11,5 +12,11 @@ def CreateGroupMemHandler(sender,**kwargs):
 
         created =kwargs.get('created')
         if created:
-                GroupMembership.objects.create(user = kwargs.get('user'),group = kwargs.get('instance'),userType = 'OW')
+		user = kwargs.get('user')
+		group = kwargs.get('group')
 
+                GroupMembership.objects.create(user=user, group=instance, userType='OW')
+
+		#Add follower to the group
+		folo=Follow.objects.te(leader=group)
+		folo.followers.add(ser)

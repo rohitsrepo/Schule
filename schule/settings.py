@@ -1,7 +1,7 @@
 # Django settings for schule project.
 
 import os
-PROJECT_ROOT = '/home/rohit/Desktop/star/virtual/Schule/' 
+PROJECT_ROOT = '/home/ubuntu/virtuals/vrtl1/Schule/' 
 DEBUG = True
 TEMPLATE_DEBUG = DEBUG
 
@@ -124,8 +124,10 @@ INSTALLED_APPS = (
     'django.contrib.admin',
     'accounts',
     'courses',
+    'groups',
     'polls',
     'forums',
+    'updates',
     # Uncomment the next line to enable admin documentation:
     # 'django.contrib.admindocs',
 )

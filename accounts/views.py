@@ -16,6 +16,7 @@ def register(request):
       #user = User.objects.create_user(form.cleaned_data['username'], None, form.cleaned_data['password1'])
       #user.save()
       form.save()
+      #TODO- On adding new user, add it to the institute-wide group, ensure update is generated corresponding to user addition.
       return redirect(settings.USER_HOME) # Redirect after POST
   else:
     form = UserRegistrationForm() # An unbound form

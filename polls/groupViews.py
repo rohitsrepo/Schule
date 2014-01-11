@@ -3,12 +3,12 @@ from django.template import RequestContext
 from polls.forms import GroupPollForm, GroupPollOptionForm
 from groups.models import Group
 from polls.models import GroupPoll, GroupPollOption
+from updates.models import Incident
 from django.contrib.auth.decorators import login_required
 from django.core.urlresolvers import reverse
 from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 from django.forms.models import inlineformset_factory
 from django.http import Http404
-
 
 #TODO - Ajaxify the call on the frontend
 #	to reduce number of queries in following views
@@ -31,7 +31,9 @@ def CreatePoll(request,group_id):
 			poll.group = group
 			poll.creater = request.user
 			poll.save()
-			
+
+			#Create incident.
+			Incident.objects.create(actor=request.user, action_object=poll, target=group, verb='added')			
 						
 			return redirect(reverse('group_poll_op', args=(group.id, poll.id,)))
 	else:
@@ -107,6 +109,9 @@ def EditPoll(request,group_id,poll_id):
 		if poll_form.is_valid() and poll_op_formset.is_valid():
 			poll_form.save()
 			poll_op_formset.save()
+
+		#Create incident,
+		Incident.objects.create(actor=request.user, action_object=poll, target=group, verb="editted")
 
 		return redirect(reverse('group_poll_edit', args=(group_id, poll_id)))
 

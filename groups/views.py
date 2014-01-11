@@ -3,6 +3,7 @@ from django.conf import settings
 from django.template import RequestContext
 from groups.forms import GroupForm, GroupMemberForm, GroupResourceForm
 from groups.models import Group, GroupMembership, GroupResource
+from updates.models import Incident, Follow
 #from groups.signals import CreateGroupMembership
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import get_object_or_404,get_list_or_404
@@ -11,6 +12,7 @@ from django.http import HttpResponse
 from django.core.paginator import Paginator,PageNotAnInteger,EmptyPage
 from accounts.models import SchuleUser
 from django.http import HttpResponseNotFound
+from django.contrib.contenttypes.models import ContentType
 #Group registration
 #permission create and check
 
@@ -23,7 +25,8 @@ def RegisterGroup(request):
                         newGroup = form.save(commit=False)
                         newGroup.save(user = request.user)
 
-                        #CreateGroupMembership.send(sender = Group,instance=newGroup,user=request.user,created = True)
+			#No incident to be created here. Add creter to group followers once GroupMembership is updated.
+
                         return redirect(reverse('group_home', args=(newGroup.id,))) # Redirect after POST
         else:
                 form = GroupForm() # An unbound form
@@ -72,6 +75,13 @@ def GroupMember(request,id):
                         new_member.group = group
                         new_member.save()
 
+			#Create an incident.
+			Incidents.objects.create(actor=request.user, action_object=new_member.user, target=group, verb="added")		
+			# Add follower to the group.
+			group_content = ContentType.objects.get_for_model(Group)
+			folo, create = Follo.objects.get_or_create(content_type=group_content, object_id=group.id)
+			folo.followers.add(new_member.user)
+
                         return redirect(reverse('group_member',args=(id,)))
         else:
                 form = GroupMemberForm(group_id=id)
@@ -94,6 +104,8 @@ def FlipMembership(request,group_id,user_id):
                 pass
         else:
                 return HttpResponseNotFound("<h1>Not a valid request</h1>")
+
+	#TODO - add notification/alert for the user.
 
         group.save()
         #respond by redirecting to original page.
@@ -162,6 +174,9 @@ def RegisterGroupResource(request,group_id):
                         res = form.save(commit=False)
                         res.group = group
                         res.save()
+
+			#Create incident.
+			Incident.objects.create(actor=request.user, action_object=res, target=group, verb='added')
 
                         return redirect(reverse('group_resource_page' , args=(group_id, )))
 

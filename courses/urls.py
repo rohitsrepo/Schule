@@ -1,7 +1,7 @@
 from django.conf.urls import include,patterns,url
 from django.conf import settings
-from polls import urls as polls_urls
-from forums import urls as forums_urls
+from polls import courseUrls as poll_urls
+from forums import courseUrls as forum_urls
 
 urlpatterns = patterns('courses.views',
     url(r'RegisterCourse$','RegisterCourse',name="register_course"),
@@ -20,6 +20,6 @@ urlpatterns = patterns('courses.views',
 )
 
 urlpatterns += patterns('',
-    url(r'course/(?P<course_id>\d+)/polls/',include(polls_urls)),
-    url(r'course/(?P<course_id>\d+)/forums/',include(forums_urls)),
+    url(r'course/(?P<course_id>\d+)/polls/',include(poll_urls)),
+    url(r'course/(?P<course_id>\d+)/forums/',include(forum_urls)),
 )

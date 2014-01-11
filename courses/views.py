@@ -3,6 +3,7 @@ from django.conf import settings
 from django.template import RequestContext
 from courses.forms import CourseForm, CourseMemberForm, CourseResourceForm
 from courses.models import Course, CourseMembership, CourseResource
+from updates.models import Incident, Follow
 #from courses.signals import CreateCourseMembership 
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import get_object_or_404,get_list_or_404
@@ -11,6 +12,7 @@ from django.http import HttpResponse
 from django.core.paginator import Paginator,PageNotAnInteger,EmptyPage
 from accounts.models import SchuleUser
 from django.http import HttpResponseNotFound
+from django.contrib.contenttypes.models import ContentType
 #Course registration
 #permission create and check
 
@@ -23,7 +25,8 @@ def RegisterCourse(request):
 			newCourse = form.save(commit=False)
 			newCourse.save(user = request.user)
 	
-			#CreateCourseMembership.send(sender = Course,instance=newCourse,user=request.user,created = True)
+			#No event on course creation - only one follower - actor himself.
+			#Just add a follower after the CourseMembership table has been popoulated,
 			return redirect(reverse('course_home', args=(newCourse.id,))) # Redirect after POST
 	else:
 		form = CourseForm() # An unbound form
@@ -41,9 +44,7 @@ def CoursePage(request):
 #decide on membership policy- members only view....or all with restricted access
 @login_required
 def CourseHome(request,id):
-	print "retieveing course with id : " +id
 	course = get_object_or_404(Course,pk = id)
-	print "got course with id : "+ str(course.id)
 	courseAdmin =get_object_or_404(CourseMembership,course__id__exact =id,userType='OW').user
 
 	courseModMembers =[]
@@ -74,6 +75,13 @@ def CourseMember(request,id):
 			new_member.course = course
 			new_member.save()
 
+			#Add follower to the course.
+			course_content = ContentType.objects.get_for_model(Course)
+			follow,create= Follow.objects.get_or_create(content_type=course_content,object_id=course.id)
+			follow.add(new_user)
+		
+			#No event to be generated here- course is a formal entity.
+		
 			return redirect(reverse('course_member',args=(id,)))
 	else:
 		form = CourseMemberForm(course_id=id)
@@ -96,6 +104,8 @@ def FlipMembership(request,course_id,user_id):
 		pass
 	else:
 		return HttpResponseNotFound("<h1>Not a valid request</h1>")
+
+	#TODO - create alert for the user.
 
 	course.save()
 	#respond by redirecting to original page.
@@ -163,7 +173,10 @@ def RegisterCourseResource(request,course_id):
 			res = form.save(commit=False)
 			res.course = course
 			res.save()
-			
+
+			#Create event.
+			Incident.objects.create(actor=request.user, action_object=res, target=course, verb="added")			
+
 			return redirect(reverse('course_resource_page' , args=(course_id, )))
 	
 	else:

@@ -1,5 +1,5 @@
 from django.dispatch import Signal, receiver 
-
+from updates.models import Follow
 
 #Signal for saving the corresponding entry in the CourseMembership
 #when a new course is added.
@@ -11,4 +11,11 @@ def CreateCourseMemHandler(sender,**kwargs):
 
 	created =kwargs.get('created')
 	if created:
-		CourseMembership.objects.create(user = kwargs.get('user'),course = kwargs.get('instance'),userType = 'OW')
+		user = kwargs.get('user')
+		course = kwargs.get('instance')
+
+		CourseMembership.objects.create(user = user,course = course,userType = 'OW')
+		
+		#Add follower to the course.
+		folo = Follow.objects.create(leader=course)
+		folo.followers.add(user)

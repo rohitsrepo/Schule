@@ -2,6 +2,7 @@ from django.shortcuts import render_to_response, redirect, get_object_or_404
 from django.template import RequestContext
 from forums.forms import CourseForumForm, CourseForumCommentForm
 from forums.models import CourseForum, CourseForumComment
+from updates.models import Incident
 from django.contrib.auth.decorators import login_required
 from django.core.urlresolvers import reverse
 from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
@@ -23,6 +24,8 @@ def CreateForum(request,course_id):
                         forum.creater = request.user
                         forum.save()
 
+			#Create incident,
+			Incident.objects.create(actor=request.user, action_object=forum, target=course, verb="added")
 
                         return redirect(reverse('course_forumHome', args=(course.id, forum.id,)))
         else:
@@ -44,7 +47,10 @@ def EditForum(request,course_id,forum_id):
                
                 if forum_form.is_valid():
                         forum_form.save()
-                       
+
+		#Create incident.
+		Incident.objects.create(actor=request.user, action_object=forum, target=course, verb="editted")                       
+
                 return redirect(reverse('course_forum_edit', args=(course_id, forum_id)))
 
         else:
@@ -97,6 +103,9 @@ def ForumHome(request,course_id,forum_id):
 				comment_object.commenter = request.user
 				comment_object.forum = forum
 				comment_object.save()
+
+				#Create incident.
+				Incident.objects.create(actor=request.user, action_object=forum, target=course, verb="commented")
 
                         	return redirect(reverse('course_forumHome', args=(course_id,forum_id,)))
 		else:

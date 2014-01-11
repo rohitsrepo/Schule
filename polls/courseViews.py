@@ -2,6 +2,7 @@ from django.shortcuts import render_to_response, redirect, get_object_or_404
 from django.template import RequestContext
 from polls.forms import CoursePollForm, CoursePollOptionForm
 from courses.models import Course
+from updates.models import Incident, Follow
 from polls.models import CoursePoll, CoursePollOption
 from django.contrib.auth.decorators import login_required
 from django.core.urlresolvers import reverse
@@ -32,7 +33,9 @@ def CreatePoll(request,course_id):
 			poll.creater = request.user
 			poll.save()
 			
-						
+			#Create corresponding incident.
+			Incident.objects.create(actor=request.user, verb='added', target=course, action_object=poll)	
+
 			return redirect(reverse('course_poll_op', args=(course.id, poll.id,)))
 	else:
 		poll_form = CoursePollForm()
@@ -107,6 +110,10 @@ def EditPoll(request,course_id,poll_id):
 		if poll_form.is_valid() and poll_op_formset.is_valid():
 			poll_form.save()
 			poll_op_formset.save()
+
+			#Create an incident.
+			Incident.objects.create(actor=request.user, target=course, action_object=poll, verb='editted')
+
 
 		return redirect(reverse('course_poll_edit', args=(course_id, poll_id)))
 
