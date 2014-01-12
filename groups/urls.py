@@ -6,6 +6,7 @@ from forums import groupUrls as forums_urls
 urlpatterns = patterns('groups.views',
     url(r'RegisterGroup$','RegisterGroup',name="register_group"),
     url(r'group/(?P<id>\d+)$','GroupHome',name="group_home"),
+    url(r'group/(?P<id>\d+)/updates$','GroupUpdates',name="group_updates"),
     url(r'group/(?P<id>\d+)/members$','GroupMember',name="group_member"),
     url(r'group/(?P<group_id>\d+)/flipMembership/(?P<user_id>\d+)$','FlipMembership',name="flip_group_membership"),
     url(r'MyGroups$','UserGroups',name='my_group'),

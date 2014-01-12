@@ -7,6 +7,7 @@
 
 {% block links %}
 	<li><a href="{% url 'group_page' %}">Home</a></li>
+	<li><a href="{% url 'group_updates' group.id %}">Updates</a></li>
 	<li><a href="{% url 'group_member' group.id %}"> Members </a></li>
 	<li><a href ="{% url 'group_pollsHome' group.id %}">Polls</a></li>
 	<li><a href="{% url 'group_forumsHome' group.id  %}">Forums</a></li>

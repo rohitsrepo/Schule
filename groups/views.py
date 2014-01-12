@@ -3,7 +3,7 @@ from django.conf import settings
 from django.template import RequestContext
 from groups.forms import GroupForm, GroupMemberForm, GroupResourceForm
 from groups.models import Group, GroupMembership, GroupResource
-from updates.models import Incident, Follow
+from updates.models import Incident, Follow, Update
 #from groups.signals import CreateGroupMembership
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import get_object_or_404,get_list_or_404
@@ -60,6 +60,32 @@ def GroupHome(request,id):
                 'groupAdmin':groupAdmin,
                 'groupMods':groupModMembers,
                 })
+
+@login_required
+def GroupUpdates(request, id):
+	group = get_object_or_404(Group,pk = id)
+        try:
+                updates_list = Update.objects.get_updates(group)
+        except Update.DoesNotExist:
+                updates_list = []
+
+        paginator = Paginator(updates_list,5)
+
+        page = request.GET.get('page')
+
+        try:
+                updates = paginator.page(page)
+        except PageNotAnInteger:
+                updates = paginator.page(1)
+        except EmptyPage:
+                updates = paginator.page(paginator.num_pages)
+
+        return render_to_response('groups/groupUpdates.html',{
+                'updates':updates,
+                'group':group,
+        },context_instance=RequestContext(request))
+
+
 
 #decide on permission and execution policy
 @login_required
@@ -192,7 +218,7 @@ def RegisterGroupResource(request,group_id):
 def GroupResourcePage(request,group_id):
         group = get_object_or_404(Group,pk = group_id)
         try:
-                res_list = GroupResource.objects.filter(group = group_id).order_by('-date')
+                res_list = groupresource.objects.filter(group = group_id).order_by('-date')
         except GroupResource.DoesNotExist:
                 res_list = []
 

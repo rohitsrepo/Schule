@@ -11,7 +11,7 @@ class SchuleUser(AbstractUser):
 		('IN','Instructor'),
 		('MA','Manager'),
 	)
-
+	
 	userType = models.CharField(max_length =2, choices = userTypeChoices, default = 'ST')
 
 	# Split as Town, state, country, postal code etc.
@@ -36,4 +36,12 @@ class SchuleUser(AbstractUser):
 			('create_edit_student',"Can create or edit students."),
 			('create_edit_manager',"Can create or edit manager."),
 		)
+
+	def __str__(self):
+		return '%s %s' % (self.first_name, self.last_name)
+
+	def get_absolute_url(self):
+		#TODO-Change is creating public user profile
+		'''Return user full name to be used in updates.'''
+		return ''
 #admin.site.register(SchuleUser)

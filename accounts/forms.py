@@ -33,6 +33,9 @@ class UserRegistrationForm(forms.ModelForm):
         widget=forms.PasswordInput,
         help_text=_("Enter the same password as above, for verification."))
  
+    first_name = forms.CharField(label=_('First Name'), max_length=30, required=True)
+    last_name = forms.CharField(label=_('Last Name'), max_length=30, required=True)
+
     session_user = ''
 
     def __init__(self,*args,**kwargs):

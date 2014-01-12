@@ -6,6 +6,7 @@ from forums import courseUrls as forum_urls
 urlpatterns = patterns('courses.views',
     url(r'RegisterCourse$','RegisterCourse',name="register_course"),
     url(r'course/(?P<id>\d+)$','CourseHome',name="course_home"),
+    url(r'course/(?P<id>\d+)/updates$','CourseUpdates',name="course_updates"),
     url(r'course/(?P<id>\d+)/members$','CourseMember',name="course_member"),
     url(r'course/(?P<course_id>\d+)/flipMembership/(?P<user_id>\d+)$','FlipMembership',name="flip_course_membership"),
     url(r'MyCourses$','UserCourses',name='my_course'),

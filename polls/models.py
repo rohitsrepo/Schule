@@ -4,6 +4,7 @@ from groups.models import Group
 from django.conf import settings
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes import generic
+from django.core.urlresolvers import reverse	
 # Create your models here.
 
 def get_upload_file_name_courses(instance,filename):
@@ -18,6 +19,14 @@ class CoursePoll(models.Model):
 	creater = models.ForeignKey(settings.AUTH_USER_MODEL,related_name='creater+')
 	voters = models.ManyToManyField(settings.AUTH_USER_MODEL,related_name='voter+')
 	data = models.FileField(upload_to=get_upload_file_name_courses, blank=True)
+
+	def __str__(self):
+		if len(self.title) > 12:
+			return 'Poll: '+self.title[:12]+'...'
+		return 'Poll: '+self.title
+
+	def get_absolute_url(self):
+		return reverse('course_pollHome', args=[self.course.id, self.id])
 
 class CoursePollOption(models.Model):
 	name = models.CharField(max_length=200)
@@ -43,6 +52,16 @@ class GroupPoll(models.Model):
 	creater = models.ForeignKey(settings.AUTH_USER_MODEL,related_name='author+')
 	voters = models.ManyToManyField(settings.AUTH_USER_MODEL,related_name='voters+')
 	data = models.FileField(upload_to=get_upload_file_name_groups, blank=True)
+
+	def __str__(self):
+		if len(self.title) > 12:
+			return 'Poll: '+self.title[:12]+'...'
+		return 'Poll: '+self.title
+
+	def get_absolute_url(self):
+		return reverse('group_pollHome', args=[self.group.id, self.id])
+
+
 
 class GroupPollOption(models.Model):
 	name = models.CharField(max_length=200)

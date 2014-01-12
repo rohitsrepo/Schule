@@ -31,6 +31,14 @@ class Group(models.Model):
                 if sendSignal:
                         CreateGroupMembership.send(sender =Group, instance =self, user =user, created=True)
 
+	def get_absolute_url(self):
+		return reverse('group_home', args=[self.id])
+
+	def __str__(self):
+		if len(self.name > 15):
+			return 'Group: '+self.name[:15]+'...'
+		return 'Group: '+ self.name
+
 admin.site.register(Group)
 
 class GroupMembership(models.Model):
@@ -49,6 +57,14 @@ class GroupResource(models.Model):
         data = models.FileField(upload_to=get_resource_file_name)
         date =  models.DateTimeField(auto_now_add=True)
         group = models.ForeignKey(Group)
+
+	def get_absolute_url(self):
+		return reverse('group_resource_home', args=[group.id, self.id])
+
+	def __str__(self):
+		if len(self.title > 12):
+			return 'Resource: '+self.title[:12]+'...'
+		return 'Resource: '+self.title
 
 admin.site.register(GroupResource)
 '''

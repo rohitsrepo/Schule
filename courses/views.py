@@ -3,7 +3,7 @@ from django.conf import settings
 from django.template import RequestContext
 from courses.forms import CourseForm, CourseMemberForm, CourseResourceForm
 from courses.models import Course, CourseMembership, CourseResource
-from updates.models import Incident, Follow
+from updates.models import Incident, Follow, Update
 #from courses.signals import CreateCourseMembership 
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import get_object_or_404,get_list_or_404
@@ -59,6 +59,31 @@ def CourseHome(request,id):
 		'courseAdmin':courseAdmin,
 		'courseMods':courseModMembers,
 		})
+
+@login_required
+def CourseUpdates(request, id):
+	course = get_object_or_404(Course,pk = id)
+        try:
+                updates_list = Update.objects.get_updates(course)
+        except Update.DoesNotExist:
+                updates_list = []
+
+        paginator = Paginator(updates_list,5)
+
+        page = request.GET.get('page')
+
+        try:
+                updates = paginator.page(page)
+        except PageNotAnInteger:
+                updates = paginator.page(1)
+        except EmptyPage:
+                updates = paginator.page(paginator.num_pages)
+
+        return render_to_response('courses/courseUpdates.html',{
+                'updates':updates,
+                'course':course,
+        },context_instance=RequestContext(request))
+
 
 
 #decide on permission and execution policy
